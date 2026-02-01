@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discover Your Influencing Style</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --bg-card: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --accent: #2d6a6a;
+      --accent-light: #e8f0f0;
+      --border: #e5e2de;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --max-w: 640px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; }
+    .wrapper { max-width: var(--max-w); margin: 0 auto; padding: 1.5rem; }
+    section { display: none; min-height: 60vh; }
+    section.active { display: block; animation: fade 0.3s ease; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Home */
+    .hero {
+      text-align: center;
+      padding: 2rem 0 2.5rem;
+    }
+    .hero h1 { font-size: clamp(1.75rem, 5vw, 2.25rem); margin: 0 0 1rem; color: var(--text); }
+    .hero p { color: var(--text-muted); margin: 0 0 2rem; font-size: 1.05rem; }
+    .styles-pill { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; }
+    .pill { font-size: 0.8rem; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); padding: 0.35rem 0.75rem; border-radius: 999px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font: 600 1rem 'DM Sans'; padding: 0.9rem 1.75rem; border-radius: var(--radius); border: none; cursor: pointer; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #255a5a; transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-secondary { background: var(--bg-card); color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn-secondary:hover { background: var(--accent-light); }
+    .btn-ghost { background: transparent; color: var(--text-muted); }
+    .btn-ghost:hover { color: var(--text); }
+    .hero .btn { margin: 0 0.5rem 0.5rem 0; }
+    .hero .link-guide { font-size: 0.95rem; color: var(--accent); text-decoration: none; margin-top: 1rem; display: inline-block; }
+    .hero .link-guide:hover { text-decoration: underline; }
+
+    /* Quiz */
+    .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .quiz-back { font-size: 0.9rem; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 0.5rem 0; display: inline-flex; align-items: center; gap: 0.35rem; font-family: inherit; }
+    .quiz-back:hover { color: var(--text); }
+    .quiz-progress { font-size: 0.85rem; color: var(--text-muted); }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 2rem; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+    .quiz-q { font-family: 'Fraunces', serif; font-size: 1.2rem; margin-bottom: 1.25rem; line-height: 1.45; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 0.75rem; }
+    .quiz-opt {
+      display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.1rem; background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; text-align: left;
+    }
+    .quiz-opt:hover { border-color: #c9c5bf; }
+    .quiz-opt.selected { border-color: var(--accent); background: var(--accent-light); }
+    .quiz-opt input { margin-top: 0.2rem; flex-shrink: 0; accent-color: var(--accent); }
+    .quiz-opt label { flex: 1; cursor: pointer; font-size: 0.98rem; }
+    .quiz-actions { display: flex; justify-content: space-between; margin-top: 2rem; }
+    .quiz-actions .btn { min-width: 120px; }
+
+    /* Results */
+    .results-header { text-align: center; margin-bottom: 2rem; }
+    .results-header h1 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+    .results-profile { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.5rem 0 0; }
+    .style-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; background: var(--accent-light); color: var(--accent); border-radius: 999px; font-weight: 600; font-size: 0.95rem; }
+    .style-badge svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .style-badge.secondary { background: var(--border); color: var(--text-muted); font-weight: 500; }
+    .results-block { background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow); }
+    .results-block h3 { font-size: 1.1rem; margin: 0 0 0.75rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .results-block h3 svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; }
+    .results-block p, .results-block ul { margin: 0 0 0.5rem; }
+    .results-block ul { padding-left: 1.25rem; }
+    .results-block li { margin-bottom: 0.35rem; }
+    .results-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
+
+    /* Guide */
+    .guide-intro { margin-bottom: 2rem; }
+    .guide-intro p { color: var(--text-muted); margin: 0 0 1rem; }
+    .guide-intro .btn { margin-top: 0.5rem; }
+    .guide-section { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+    .guide-section:last-of-type { border-bottom: none; }
+    .guide-section h2 { font-size: 1.35rem; margin: 0 0 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .guide-section h2 svg { width: 28px; height: 28px; color: var(--accent); }
+    .guide-section .tagline { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem; font-style: italic; }
+    .guide-section h4 { font-size: 1rem; margin: 1rem 0 0.4rem; color: var(--text); }
+    .guide-section ul { padding-left: 1.25rem; margin: 0 0 0.5rem; }
+    .guide-section li { margin-bottom: 0.25rem; }
+    .guide-nav { position: sticky; top: 0; background: var(--bg); padding: 0.75rem 0; margin: -0.5rem 0 1rem; z-index: 2; border-bottom: 1px solid var(--border); }
+    .guide-nav-inner { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .guide-nav a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; padding: 0.35rem 0.6rem; border-radius: 6px; }
+    .guide-nav a:hover { color: var(--accent); background: var(--accent-light); }
+
+    /* Icons */
+    .icon-back { width: 18px; height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Discover Your Influencing Style</h1>
+        <p>Take a short quiz to understand how you naturally motivate others—at work, at home, and in your community. Get personalised insights on your strengths, blind spots, and how to work best with different styles.</p>
+        <div class="styles-pill">
+          <span class="pill">Bridging</span>
+          <span class="pill">Rationalizing</span>
+          <span class="pill">Asserting</span>
+          <span class="pill">Inspiring</span>
+          <span class="pill">Negotiating</span>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btn-start">Start the quiz</button>
+        </div>
+        <a href="#" class="link-guide" id="link-guide">View the guide to all five styles →</a>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+      <div class="quiz-header">
+        <button type="button" class="quiz-back" id="quiz-back" aria-label="Go back">
+          <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+      <p class="quiz-q" id="quiz-q"></p>
+      <div class="quiz-opts" id="quiz-opts"></div>
+      <div class="quiz-actions">
+        <button type="button" class="btn btn-ghost" id="quiz-prev" style="visibility:hidden">Previous</button>
+        <button type="button" class="btn btn-primary" id="quiz-next" disabled>Next</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results">
+      <div class="results-header">
+        <h1>Your Influencing Style</h1>
+        <div class="results-profile" id="results-profile"></div>
+      </div>
+      <div id="results-why" class="results-block"></div>
+      <div id="results-strengths" class="results-block"></div>
+      <div id="results-blindspots" class="results-block"></div>
+      <div id="results-workbest" class="results-block"></div>
+      <div id="results-borrow" class="results-block"></div>
+      <div class="results-actions">
+        <a href="#" class="btn btn-primary" id="results-guide">Explore the guide</a>
+        <button type="button" class="btn btn-secondary" id="results-retake">Retake the quiz</button>
+        <a href="#" class="btn btn-ghost" id="results-home">Back to home</a>
+      </div>
+    </section>
+
+    <!-- GUIDE -->
+    <section id="guide">
+      <div class="guide-nav">
+        <div class="guide-nav-inner">
+          <a href="#g-bridging">Bridging</a>
+          <a href="#g-rationalizing">Rationalizing</a>
+          <a href="#g-asserting">Asserting</a>
+          <a href="#g-inspiring">Inspiring</a>
+          <a href="#g-negotiating">Negotiating</a>
+        </div>
+      </div>
+      <div class="guide-intro">
+        <h1>Guide to the Five Influencing Styles</h1>
+        <p>Based on the BRAIN framework (Bridging, Rationalizing, Asserting, Inspiring, Negotiating), each style has strengths and works best in different situations. No single style fits every context—awareness helps you adapt.</p>
+        <button type="button" class="btn btn-primary" id="guide-start">Take the quiz to find your style</button>
+        <a href="#" class="link-guide" id="guide-home" style="display:block;margin-top:1rem">← Back to home</a>
+      </div>
+      <div id="guide-content"></div>
+    </section>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      var STYLES = ['bridging', 'rationalizing', 'asserting', 'inspiring', 'negotiating'];
+      var STYLE_LABELS = { bridging: 'Bridging', rationalizing: 'Rationalizing', asserting: 'Asserting', inspiring: 'Inspiring', negotiating: 'Negotiating' };
+
+      var QUESTIONS = [
+        { q: "When you need to get buy-in for an idea at work or in a group, you typically…", opts: [
+          { label: "Bring in others whose support will help—colleagues, a respected friend, or people who've had success with similar ideas.", style: 'bridging' },
+          { label: "Put together a clear case with data, examples, or a logical rationale for why it works.", style: 'rationalizing' },
+          { label: "State your view clearly and confidently and explain why it's the right direction.", style: 'asserting' },
+          { label: "Share a story or a vision of what's possible and why it matters to everyone.", style: 'inspiring' },
+          { label: "Look for a version that works for most people and offer trade-offs so others feel they've gained something too.", style: 'negotiating' }
+        ]},
+        { q: "A family member is hesitant about a big decision (e.g. moving, a major purchase). You usually…", opts: [
+          { label: "Suggest they talk to people who've been through it, or involve a trusted relative so they don't feel alone.", style: 'bridging' },
+          { label: "Lay out the pros and cons, numbers, and likely outcomes so they can see the logic.", style: 'rationalizing' },
+          { label: "Tell them clearly what you think they should do and why you're confident about it.", style: 'asserting' },
+          { label: "Describe what it could look like in the future or share an example that makes the choice feel exciting and real.", style: 'inspiring' },
+          { label: "Propose a middle path—a smaller step first, or a compromise that eases their worries.", style: 'negotiating' }
+        ]},
+        { q: "In a disagreement with a friend or colleague, you tend to…", opts: [
+          { label: "Bring in someone else who can help you both see common ground or who they trust.", style: 'bridging' },
+          { label: "Focus on the facts and assumptions so you can agree on what's true before deciding.", style: 'rationalizing' },
+          { label: "Be direct about what you want and where you stand.", style: 'asserting' },
+          { label: "Appeal to shared values or a bigger purpose you both care about.", style: 'inspiring' },
+          { label: "Look for a compromise where each person gives a little and gets something they need.", style: 'negotiating' }
+        ]},
+        { q: "When you're trying to motivate a team or group to take on a challenging task, you often…", opts: [
+          { label: "Make sure the right people are in the room and that everyone feels consulted and part of the plan.", style: 'bridging' },
+          { label: "Show the numbers, milestones, or a clear plan so the path forward makes sense.", style: 'rationalizing' },
+          { label: "Set a clear direction and show you're confident they can do it.", style: 'asserting' },
+          { label: "Paint a picture of what success looks like or tell a story that sparks energy and belief.", style: 'inspiring' },
+          { label: "Find a balance—adjust roles, deadlines, or scope so most people can commit without burning out.", style: 'negotiating' }
+        ]},
+        { q: "You're trying to persuade someone who doesn't report to you (e.g. a cross-team lead, a neighbor, a volunteer). Your go-to is…", opts: [
+          { label: "Use shared connections or invite someone they respect into the conversation.", style: 'bridging' },
+          { label: "Build a solid case with data, research, or a clear rationale.", style: 'rationalizing' },
+          { label: "Be straightforward and assertive about what you're asking and why it matters.", style: 'asserting' },
+          { label: "Connect the ask to something they care about—a cause, a future they want, or a meaningful example.", style: 'inspiring' },
+          { label: "Propose a deal: you offer something (time, resources, flexibility) in return for their support.", style: 'negotiating' }
+        ]},
+        { q: "When introducing a new idea or change to a skeptical audience, you usually…", opts: [
+          { label: "Get a few allies or early adopters to share their experience so the idea feels proven and social.", style: 'bridging' },
+          { label: "Lead with evidence—pilots, benchmarks, or a step-by-step argument.", style: 'rationalizing' },
+          { label: "State the case firmly and address doubts with confidence.", style: 'asserting' },
+          { label: "Use a vivid example, metaphor, or “imagine if” to make the idea tangible and exciting.", style: 'inspiring' },
+          { label: "Acknowledge their concerns and suggest a trial or phased approach so they can ease in.", style: 'negotiating' }
+        ]},
+        { q: "A neighbor or community group is divided on an issue. You're asked to help. You tend to…", opts: [
+          { label: "Bring different sides into one conversation and create a process where everyone is heard and can find shared ground.", style: 'bridging' },
+          { label: "Gather facts, survey results, or best practices so the discussion is grounded in information, not rumor.", style: 'rationalizing' },
+          { label: "Take a clear position and explain why it's the right one, then invite others to follow.", style: 'asserting' },
+          { label: "Describe a shared future—what the street or community could look like if they unite—to inspire cooperation.", style: 'inspiring' },
+          { label: "Propose a solution that gives each side something important, even if no one gets everything.", style: 'negotiating' }
+        ]},
+        { q: "When you want a parent, partner, or close friend to try something new (e.g. a hobby, a habit, a trip), you typically…", opts: [
+          { label: "Involve someone they like or trust who already does it, so they see it through a familiar person.", style: 'bridging' },
+          { label: "Explain the benefits, risks, and logistics in a clear, factual way.", style: 'rationalizing' },
+          { label: "Tell them you think they should do it and that you're confident it's right for them.", style: 'asserting' },
+          { label: "Share a story of how it changed you or someone else, or how it could change their life.", style: 'inspiring' },
+          { label: "Suggest a low-commitment version first—a short trial, a smaller step—so they can try without big stakes.", style: 'negotiating' }
+        ]},
+        { q: "In a meeting where opinions clash, your natural role is often to…", opts: [
+          { label: "Make sure the right people are present and create space for everyone to contribute so the group can find consensus.", style: 'bridging' },
+          { label: "Clarify assumptions and lay out the data or logic so the group can decide on a shared basis.", style: 'rationalizing' },
+          { label: "State your recommendation clearly and stand behind it.", style: 'asserting' },
+          { label: "Reframe the discussion around a common purpose or a compelling “why” that rises above the clash.", style: 'inspiring' },
+          { label: "Find elements both sides can accept and suggest a blend or trade-off.", style: 'negotiating' }
+        ]},
+        { q: "When someone else is trying to persuade you, you're most convinced when they…", opts: [
+          { label: "Involve people you respect or show that others like you have already benefited.", style: 'bridging' },
+          { label: "Present solid evidence, numbers, or a clear logical argument.", style: 'rationalizing' },
+          { label: "Are direct and confident and don't hedge.", style: 'asserting' },
+          { label: "Tell a compelling story or connect the idea to something you care about.", style: 'inspiring' },
+          { label: "Offer a fair exchange or a compromise that shows they've considered your needs.", style: 'negotiating' }
+        ]}
+      ];
+
+      function shuffle(arr) {
+        var i, j, t;
+        for (i = arr.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+        }
+        return arr;
+      }
+
+      var questionsShuffled = QUESTIONS.map(function(q) {
+        return { q: q.q, opts: shuffle(q.opts.slice()) };
+      });
+
+      var view = 'home', quizStep = 1, answers = [];
+      var primary = [], secondary = [], lowest = [];
+
+      var CONTENT = {
+        why: {
+          bridging: "You influence through connection and inclusion. You’re comfortable drawing on the relationships around you and bringing the right people into the room so that ideas feel supported and consensus can form. Others experience you as collaborative and trustworthy because you make them part of the process.",
+          rationalizing: "You influence through logic and evidence. You like to build a clear case with data, facts, and a step-by-step rationale so that others can follow and agree on what’s true. People experience you as thorough and credible, especially when the stakes or complexity are high.",
+          asserting: "You influence through clarity and confidence. You’re a straight shooter who states your view and stands behind it, which helps others know where you stand and can motivate them to act. People experience you as decisive and dependable when direction is needed.",
+          inspiring: "You influence through stories and possibility. You use examples, metaphors, and a compelling “why” to help people see what could be and to feel part of something larger. Others experience you as energising and purposeful, especially when you’re aiming for buy-in or change.",
+          negotiating: "You influence through trade-offs and middle ground. You look for options where different interests can be met and where people feel they’ve gained something. Others experience you as fair and pragmatic, and you often help groups move forward when positions are stuck."
+        },
+        strengths: {
+          bridging: ["You build trust by involving others and creating a sense of belonging.", "You’re skilled at finding and mobilising the right people to support an idea.", "You help groups move toward consensus without leaving people behind.", "You’re often the one who makes sure everyone’s voice is heard."],
+          rationalizing: ["You bring clarity to complex decisions with data and structure.", "You’re trusted when accuracy and objectivity matter.", "You help others follow the logic and avoid decisions based only on gut feel.", "You’re good at anticipating counter-arguments and addressing them with evidence."],
+          asserting: ["You give clear direction when others are unsure.", "You’re willing to take a stand and own the outcome.", "You help groups move from discussion to action.", "You’re seen as reliable and consistent under pressure."],
+          inspiring: ["You help people see the bigger picture and feel motivated to contribute.", "You make abstract or dry topics relatable through stories and examples.", "You’re effective at creating a sense of shared purpose.", "You often raise energy and optimism in a room."],
+          negotiating: ["You help find solutions when interests seem to clash.", "You’re good at making others feel they’ve gained something, not just conceded.", "You’re pragmatic and focused on what’s workable.", "You can unstick difficult conversations by proposing alternatives."]
+        },
+        blindSpots: {
+          bridging: ["You can slow decisions down if you over-include or wait for full consensus.", "You may underuse your own authority when a clear “this is the direction” is needed.", "You might avoid or soften difficult messages to protect relationships."],
+          rationalizing: ["You can lose people who need stories or emotion before they engage with data.", "You might over-invest in the perfect case when a simpler, more direct message would work.", "You may come across as cold or distant when others need connection first."],
+          asserting: ["You can come across as rigid or dismissive if others need more consultation.", "You might override good ideas from others when you’re certain you’re right.", "You may miss signals that people need more time or a gentler approach."],
+          inspiring: ["You can be seen as light on detail when others want facts and plans.", "You might over-rely on vision when a clear, concrete ask is needed.", "You may struggle in highly analytical or sceptical environments without backing up with evidence."],
+          negotiating: ["You can give away too much when the situation needs a firmer stance.", "You might blur your own priorities in the search for compromise.", "You may delay or dilute decisions when a clear “no” or “yes” would help."]
+        },
+        secondaryStrength: {
+          bridging: "Your Bridging adds a talent for bringing people together and building consensus.",
+          rationalizing: "Your Rationalizing adds rigour and credibility to your case.",
+          asserting: "Your Asserting adds clarity and the ability to take a stand when it matters.",
+          inspiring: "Your Inspiring adds energy and the ability to connect ideas to what people care about.",
+          negotiating: "Your Negotiating adds flexibility and a knack for finding workable trade-offs."
+        },
+        secondaryBlindSpot: {
+          bridging: "Your Bridging can sometimes slow you down when a quicker, more direct move is needed.",
+          rationalizing: "Your Rationalizing can sometimes make you over-rely on data when emotion or relationship matters more.",
+          asserting: "Your Asserting can sometimes make you overlook the need to build connection or consensus first.",
+          inspiring: "Your Inspiring can sometimes lead you to skip the logical or structural case others need.",
+          negotiating: "Your Negotiating can sometimes pull you toward compromise when holding the line would be better."
+        },
+        leadWith: {
+          bridging: "Lead with Bridging when the decision needs broad buy-in, when relationships are central, or when you’re working across silos and need to bring people together. Your strength is making others feel included and building consensus.",
+          rationalizing: "Lead with Rationalizing when the topic is complex, evidence matters, or others are sceptical. Your strength is creating a clear, credible case that people can follow and verify.",
+          asserting: "Lead with Asserting when direction is unclear, time is short, or the group needs someone to own the outcome. Your strength is giving clarity and confidence so others can act.",
+          inspiring: "Lead with Inspiring when you need to motivate change, create shared purpose, or help people see what’s possible. Your strength is making the future tangible and worth striving for.",
+          negotiating: "Lead with Negotiating when interests conflict, when you need to unstick a standoff, or when a workable compromise will move things further than a win-lose outcome. Your strength is finding options that let everyone gain something."
+        },
+        useSecondary: "Use your secondary style when the situation calls for it: for example, when the other person clearly prefers data (Rationalizing), connection (Bridging), a clear stance (Asserting), a compelling story (Inspiring), or a fair trade (Negotiating). It gives you a second gear without changing who you are.",
+        workingWith: {
+          bridging: "With Bridging types: involve others, ask who else should be in the room, and show that respected people support the idea. Build connection before pressing for a decision.",
+          rationalizing: "With Rationalizing types: share data, structure, and a clear logic. Be prepared to answer “why” and “how do you know” with evidence.",
+          asserting: "With Asserting types: be direct and clear about what you want. Respect their confidence and match it with your own clarity; avoid long preambles.",
+          inspiring: "With Inspiring types: connect the idea to a bigger purpose or a vivid future. Use a short story or example to make it real before diving into details.",
+          negotiating: "With Negotiating types: signal openness to trade-offs. Show what they gain, not only what you want, and look for a balanced exchange."
+        },
+        borrow: {
+          bridging: {
+            rationalizing: "To bring in Rationalizing: add one or two concrete facts or numbers before or after your main point. Keep it brief so it supports rather than replaces your focus on people and connection.",
+            asserting: "To bring in Asserting: state your recommendation in one clear sentence at the start. You can still bring people in; leading with the conclusion helps those who want direction first.",
+            inspiring: "To bring in Inspiring: add a short ‘imagine if’ or one-sentence story that shows what’s possible. Your natural focus on people makes it easy to make it about a shared future.",
+            negotiating: "To bring in Negotiating: name one thing you’re willing to adjust or one trade you’d consider. You don’t need to lead with it; offering it shows flexibility without losing your collaborative core."
+          },
+          rationalizing: {
+            bridging: "To bring in Bridging: name one person who supports the idea or one group that has already succeeded. One concrete reference is enough—it adds social proof without changing your analytical approach.",
+            asserting: "To bring in Asserting: start with your bottom line in one sentence, then support it with data. Your evidence will land more strongly when your position is clear from the start.",
+            inspiring: "To bring in Inspiring: add one vivid example or ‘imagine if’ before the numbers. It gives meaning to the data and helps those who need to feel the idea before they analyse it.",
+            negotiating: "To bring in Negotiating: offer one clear trade or option—e.g. ‘If we do X, we could do Y.’ You can keep the rest of your case logic-based; one concession shows you’re flexible."
+          },
+          asserting: {
+            bridging: "To bring in Bridging: name one or two people who are already on board before you state your view. A brief ‘who’ can soften the delivery without weakening your clarity.",
+            rationalizing: "To bring in Rationalizing: add one or two key facts or numbers that back your position. You can stay direct; the data strengthens your case for those who need evidence.",
+            inspiring: "To bring in Inspiring: add one short ‘imagine if’ or story before your main ask. Keep it to a sentence so it stays true to your direct style while giving others a vision to latch onto.",
+            negotiating: "To bring in Negotiating: offer one concrete trade or flexibility—e.g. ‘I can do X if you can do Y.’ You remain clear on what you want; the trade shows you’re open to a deal."
+          },
+          inspiring: {
+            bridging: "To bring in Bridging: mention one person or group that’s already living the vision. A single reference adds the ‘who’ without shifting your focus from possibility to process.",
+            rationalizing: "To bring in Rationalizing: support your story with one or two concrete numbers or facts. The data grounds your vision for those who need evidence before they feel it.",
+            asserting: "To bring in Asserting: state your main ask or recommendation in one clear sentence early. You can still paint the picture; leading with the conclusion helps those who want direction first.",
+            negotiating: "To bring in Negotiating: name one thing you’re willing to adjust or one trade you’d consider. It shows flexibility and helps others who are looking for a fair exchange."
+          },
+          negotiating: {
+            bridging: "To bring in Bridging: mention one or two people who support the idea or who’ve benefited. It adds social proof and connection without changing your focus on finding a deal.",
+            rationalizing: "To bring in Rationalizing: add one or two key facts that support why the trade is fair or logical. It gives your compromise credibility for those who need a clear case.",
+            asserting: "To bring in Asserting: state your preferred outcome in one clear sentence before you list options. You can still offer trade-offs; the clarity helps those who want to know where you stand.",
+            inspiring: "To bring in Inspiring: add a short ‘imagine if’ or one-sentence story about what becomes possible after the deal. It gives purpose to the compromise without shifting your pragmatic core."
+          }
+        }
+      };
+
+      var GUIDE = [
+        { id: 'g-bridging', name: 'Bridging', tagline: 'Influence through connection, inclusion, and consensus.', what: "Bridging influencers use reciprocity, consultation, and personal relationships to motivate others. They bring relevant people into the conversation, create space for everyone to contribute, and build consensus. Power and trust come from relationships and from making others feel part of the process.", when: ["Decisions need broad buy-in across teams or groups.", "Relationships and trust are as important as the outcome.", "You're working across silos and need to align different stakeholders.", "The group is stuck and needs a process that includes everyone."], example: "When a colleague is hesitant about a new project, you offer to set up a call with others who’ve run something similar. By bringing more people into the conversation, you use Bridging to provide social proof and shared experience.", with: "Involve them early. Ask who else should be in the room. Show that respected people support the idea. Give time for connection and consultation before pushing for a decision." },
+        { id: 'g-rationalizing', name: 'Rationalizing', tagline: 'Influence through logic, data, and evidence.', what: "Rationalizing influencers use logic, data, and facts to persuade. They build a clear case, address assumptions, and expect others to engage with the reasoning. They’re trusted when objectivity, accuracy, and a structured argument matter.", when: ["The topic is complex or technical and needs a clear structure.", "Stakeholders are sceptical and want evidence.", "You need to compare options or justify a recommendation with data.", "The culture or audience values analysis and rigour."], example: "A client is unsure which option fits. You lay out the criteria, the data for each, and a step-by-step comparison. By appealing to their trust in logic and evidence, you help them see which choice best meets the goals.", with: "Share data, structure, and a clear logic. Be ready to answer 'why' and 'how do you know' with evidence. Avoid leading with stories or emotion if they prefer to see the case first." },
+        { id: 'g-asserting', name: 'Asserting', tagline: 'Influence through clarity, confidence, and direction.', what: "Asserting influencers use authority and assurance to motivate. They’re direct and confident, state their view clearly, and take responsibility for the outcome. Power comes from the ability to give direction and to stand behind it.", when: ["Direction is unclear and the group needs someone to own the decision.", "Time is short and you need to move from discussion to action.", "Others are looking for a clear stance and consistency.", "You have the mandate and need to use it."], example: "In a tense meeting, you state your recommendation and the reasons behind it. You don’t hedge. By being clear and confident, you help the group move forward and show you’re willing to be accountable.", with: "Be direct and clear about what you want. Respect their confidence and match it with your own clarity. Avoid long preambles; get to the point and show you’ve thought it through." },
+        { id: 'g-inspiring', name: 'Inspiring', tagline: 'Influence through stories, vision, and shared purpose.', what: "Inspiring influencers use examples, stories, and emotional appeal to motivate. They make ideas vivid and connect them to what people care about. They 'pull' rather than 'push'—creating desire and belief through possibility and meaning.", when: ["You need to motivate change or overcome resistance.", "The idea is abstract and needs to feel real and meaningful.", "You want to create a sense of shared purpose or identity.", "Energy is low and people need to see what’s possible."], example: "A team is wary of a big change. You share a short story of another group that made it work and what became possible for them. By making the future tangible, you inspire them to see the value for themselves.", with: "Connect the idea to a bigger purpose or a vivid future. Use a short story or example to make it real before diving into detail. Acknowledge how it fits what they care about." },
+        { id: 'g-negotiating', name: 'Negotiating', tagline: 'Influence through trade-offs, flexibility, and mutual gain.', what: "Negotiating influencers look for middle ground and mutually beneficial outcomes. They satisfy different interests, leave room for all voices, and create solutions where everyone can gain something. They’re effective when positions are stuck or when a fair exchange matters.", when: ["Interests conflict and you need to move from standoff to solution.", "A workable compromise will achieve more than a win-lose outcome.", "The other party needs to feel they’ve gained something, not only conceded.", "You’re in a formal or informal negotiation and need to trade to close."], example: "A partner is interested but worried about cost. You propose a phased or tiered option that fits their budget now and allows them to grow into more later. By finding a balance, you address their concern and keep the door open.", with: "Signal openness to trade-offs. Show what they gain, not only what you want. Be explicit about what you can offer in return. Look for a balanced exchange rather than pushing a single outcome." }
+      ];
+
+      function getStyleIcon(s) {
+        var icons = {
+          bridging: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 15h5l4-8 4 8h5"/></svg>',
+          rationalizing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18V9M9 18v-5M14 18V6M20 18v-7"/></svg>',
+          asserting: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
+          inspiring: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"/></svg>',
+          negotiating: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12h8M12 8v8M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>'
+        };
+        return icons[s] || '';
+      }
+
+      function showView(v) {
+        view = v;
+        document.querySelectorAll('section').forEach(function(el) { el.classList.remove('active'); });
+        var s = document.getElementById(v);
+        if (s) s.classList.add('active');
+      }
+
+      function renderQuiz() {
+        var i = quizStep - 1, q = questionsShuffled[i];
+        document.getElementById('quiz-q').textContent = q.q;
+        document.getElementById('quiz-progress').textContent = 'Question ' + quizStep + ' of 10';
+        document.getElementById('progress-fill').style.width = (quizStep / 10 * 100) + '%';
+        var prev = document.getElementById('quiz-prev'), next = document.getElementById('quiz-next');
+        prev.style.visibility = quizStep > 1 ? 'visible' : 'hidden';
+        next.textContent = quizStep === 10 ? 'See my results' : 'Next';
+        next.disabled = answers[i] == null;
+        var container = document.getElementById('quiz-opts');
+        container.innerHTML = '';
+        q.opts.forEach(function(o, idx) {
+          var id = 'opt-' + i + '-' + idx;
+          var div = document.createElement('div');
+          div.className = 'quiz-opt' + (answers[i] === o.style ? ' selected' : '');
+          div.innerHTML = '<input type="radio" name="q' + i + '" id="' + id + '" value="' + o.style + '">' +
+            '<label for="' + id + '">' + o.label + '</label>';
+          div.addEventListener('click', function() {
+            document.querySelectorAll('#quiz-opts .quiz-opt').forEach(function(el) { el.classList.remove('selected'); });
+            div.classList.add('selected');
+            div.querySelector('input').checked = true;
+            answers[i] = o.style;
+            next.disabled = false;
+          });
+          container.appendChild(div);
+        });
+        var back = document.getElementById('quiz-back');
+        back.textContent = 'Back';
+        back.onclick = function() {
+          if (quizStep === 1) { showView('home'); return; }
+          quizStep--;
+          renderQuiz();
+        };
+      }
+
+      function computeResults() {
+        var counts = { bridging: 0, rationalizing: 0, asserting: 0, inspiring: 0, negotiating: 0 };
+        answers.forEach(function(s) { if (s) counts[s]++; });
+        var max = Math.max.apply(null, Object.values(counts));
+        primary = STYLES.filter(function(s) { return counts[s] >= max - 1; });
+        var minPrimary = Math.min.apply(null, primary.map(function(s) { return counts[s]; }));
+        var below = STYLES.filter(function(s) { return counts[s] < minPrimary; });
+        var nextMax = below.length ? Math.max.apply(null, below.map(function(s) { return counts[s]; })) : -1;
+        secondary = (nextMax >= 1) ? STYLES.filter(function(s) { return counts[s] === nextMax && counts[s] < minPrimary; }) : [];
+        var exclude = primary.concat(secondary);
+        var rest = STYLES.filter(function(s) { return exclude.indexOf(s) === -1; });
+        rest.sort(function(a, b) { return counts[a] - counts[b]; });
+        lowest = rest.slice(0, 3);
+      }
+
+      function renderResults() {
+        computeResults();
+        var prof = document.getElementById('results-profile');
+        prof.innerHTML = '';
+        primary.forEach(function(s) {
+          var b = document.createElement('span');
+          b.className = 'style-badge';
+          b.innerHTML = getStyleIcon(s) + ' ' + STYLE_LABELS[s];
+          prof.appendChild(b);
+        });
+        secondary.forEach(function(s) {
+          var b = document.createElement('span');
+          b.className = 'style-badge secondary';
+          b.innerHTML = getStyleIcon(s) + ' ' + STYLE_LABELS[s] + ' (secondary)';
+          prof.appendChild(b);
+        });
+
+        var why = document.getElementById('results-why');
+        var whyTitle = primary.length > 1 ? 'Why you\'re ' + primary.map(function(s) { return STYLE_LABELS[s]; }).join(' and ') : 'Why you\'re ' + STYLE_LABELS[primary[0]];
+        if (primary.length > 1) {
+          why.innerHTML = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' + whyTitle + '</h3><p>' +
+            'You have a blend of ' + primary.map(function(s) { return STYLE_LABELS[s]; }).join(' and ') + '. You influence through a mix of their strengths—whether that\'s connection and consensus, logic and evidence, clarity and confidence, stories and vision, or trade-offs and flexibility. Use this combination depending on the situation and the people involved.</p>';
+        } else {
+          why.innerHTML = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' + whyTitle + '</h3><p>' + (CONTENT.why[primary[0]] || '') + '</p>';
+        }
+
+        var str = document.getElementById('results-strengths');
+        var strHtml = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3 9 9 1-6.5 6 1.5 9-7-4-7 4 1.5-9L0 12l9-1 3-9z"/></svg>Your strengths</h3><ul>';
+        primary.forEach(function(s) {
+          (CONTENT.strengths[s] || []).forEach(function(l) { strHtml += '<li>' + l + '</li>'; });
+        });
+        if (secondary.length) {
+          secondary.forEach(function(s) { strHtml += '<li>' + (CONTENT.secondaryStrength[s] || '') + '</li>'; });
+        }
+        strHtml += '</ul>';
+        str.innerHTML = strHtml;
+
+        var bl = document.getElementById('results-blindspots');
+        var blHtml = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Your blind spots</h3><ul>';
+        primary.forEach(function(s) {
+          (CONTENT.blindSpots[s] || []).forEach(function(l) { blHtml += '<li>' + l + '</li>'; });
+        });
+        if (secondary.length) {
+          secondary.forEach(function(s) { blHtml += '<li>' + (CONTENT.secondaryBlindSpot[s] || '') + '</li>'; });
+        }
+        blHtml += '</ul>';
+        bl.innerHTML = blHtml;
+
+        var wb = document.getElementById('results-workbest');
+        var anchor = primary[0];
+        var lead = primary.map(function(s) { return CONTENT.leadWith[s]; }).join(' ') + (secondary.length ? ' ' + CONTENT.useSecondary : '');
+        var workList = '';
+        STYLES.forEach(function(s) {
+          workList += '<li><strong>' + STYLE_LABELS[s] + ':</strong> ' + (CONTENT.workingWith[s] || '') + '</li>';
+        });
+        var focus = STYLES.filter(function(s) { return primary.indexOf(s) === -1 && secondary.indexOf(s) === -1; });
+        var intro = focus.length ? '<p>With your ' + (primary.length > 1 ? primary.map(function(s) { return STYLE_LABELS[s]; }).join(' and ') : STYLE_LABELS[primary[0]]) + ' profile, pay extra attention to the tips for ' + focus.map(function(s) { return STYLE_LABELS[s]; }).join(' and ') + '.</p>' : '';
+        wb.innerHTML = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>How to work best with your style(s)</h3><p><strong>Leading with your style:</strong> ' + lead + '</p>' + intro + '<p>Working with each style:</p><ul>' + workList + '</ul>';
+
+        var br = document.getElementById('results-borrow');
+        if (lowest.length === 0) {
+          br.innerHTML = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Using other styles in your own way</h3><p>Your profile already spans several styles. Keep using that range, and lean into the ones that feel most natural when the situation fits.</p>';
+        } else {
+          var brHtml = '<h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Using other styles in your own way</h3><p>Here are ways to bring in styles you use less often, while staying true to how you naturally operate:</p><ul>';
+          lowest.forEach(function(borrow) {
+            var tip = (CONTENT.borrow[anchor] && CONTENT.borrow[anchor][borrow]) ? CONTENT.borrow[anchor][borrow] : 'To bring in ' + STYLE_LABELS[borrow] + ': notice when others need this approach and try one small element—for example, a fact, a name, a story, a clear ask, or a trade—without changing your core style.';
+            brHtml += '<li><strong>' + STYLE_LABELS[borrow] + ':</strong> ' + tip + '</li>';
+          });
+          brHtml += '</ul>';
+          br.innerHTML = brHtml;
+        }
+      }
+
+      function buildGuide() {
+        var html = '';
+        GUIDE.forEach(function(g) {
+          html += '<div class="guide-section" id="' + g.id + '">';
+          html += '<h2>' + getStyleIcon(g.id.replace('g-','')) + ' ' + g.name + '</h2>';
+          html += '<p class="tagline">' + g.tagline + '</p>';
+          html += '<p>' + g.what + '</p>';
+          html += '<h4>When it works well</h4><ul>';
+          (g.when || []).forEach(function(w) { html += '<li>' + w + '</li>'; });
+          html += '</ul>';
+          html += '<h4>Example</h4><p>' + g.example + '</p>';
+          html += '<h4>Working with ' + g.name + ' types</h4><p>' + g.with + '</p>';
+          html += '</div>';
+        });
+        document.getElementById('guide-content').innerHTML = html;
+      }
+
+      document.getElementById('btn-start').onclick = function() {
+        quizStep = 1;
+        answers = [];
+        questionsShuffled = QUESTIONS.map(function(q) { return { q: q.q, opts: shuffle(q.opts.slice()) }; });
+        showView('quiz');
+        renderQuiz();
+      };
+
+      document.getElementById('link-guide').onclick = function(e) { e.preventDefault(); showView('guide'); };
+      document.getElementById('guide-home').onclick = function(e) { e.preventDefault(); showView('home'); };
+      document.getElementById('guide-start').onclick = function() {
+        quizStep = 1;
+        answers = [];
+        questionsShuffled = QUESTIONS.map(function(q) { return { q: q.q, opts: shuffle(q.opts.slice()) }; });
+        showView('quiz');
+        renderQuiz();
+      };
+
+      document.getElementById('quiz-next').onclick = function() {
+        if (quizStep < 10) { quizStep++; renderQuiz(); return; }
+        renderResults();
+        showView('results');
+      };
+
+      document.getElementById('quiz-prev').onclick = function() {
+        if (quizStep > 1) { quizStep--; renderQuiz(); }
+      };
+
+      document.getElementById('results-guide').onclick = function(e) {
+        e.preventDefault();
+        showView('guide');
+        var first = primary[0];
+        var el = document.getElementById('g-' + first);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      document.getElementById('results-retake').onclick = function() {
+        quizStep = 1;
+        answers = [];
+        showView('quiz');
+        renderQuiz();
+      };
+
+      document.getElementById('results-home').onclick = function(e) { e.preventDefault(); showView('home'); };
+
+      buildGuide();
+    })();
+  </script>
+</body>
+</html>
